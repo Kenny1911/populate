@@ -1,0 +1,30 @@
+{
+    "name": "kenny1911/populate",
+    "description": "",
+    "authors": [
+        {
+            "name": "Kenny1911",
+            "email": "o-muzyka@mail.ru"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kenny1911\\Populate\\": "./"
+        },
+        "exclude-from-classmap": [
+            "./Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kenny1911\\Populate\\Tests\\": "./Tests/"
+        }
+    }
+}
