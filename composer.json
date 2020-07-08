@@ -16,15 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Kenny1911\\Populate\\": "./"
-        },
-        "exclude-from-classmap": [
-            "./Tests/"
-        ]
+            "Kenny1911\\Populate\\": "./src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Kenny1911\\Populate\\Tests\\": "./Tests/"
+            "Kenny1911\\Populate\\Tests\\": "./tests/"
         }
     }
 }
