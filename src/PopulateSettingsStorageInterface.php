@@ -15,11 +15,11 @@ interface PopulateSettingsStorageInterface
     public function getProperties($src, $dest): ?array;
 
     /**
-     * @param object|string $src
-     * @param object|string $dest
-     * @param string[]      $properties
+     * @param            $src
+     * @param            $dest
+     * @param array|null $properties
      */
-    public function setProperties($src, $dest, array $properties): void;
+    public function setProperties($src, $dest, ?array $properties): void;
 
     /**
      * @param object|string $src

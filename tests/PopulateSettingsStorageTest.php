@@ -19,6 +19,7 @@ class PopulateSettingsStorageTest extends TestCase
     public function testSetProperties()
     {
         $this->assertNull($this->settings->getProperties($this->src, $this->dest));
+        $this->assertNull($this->settings->getProperties(get_class($this->src), get_class($this->dest)));
 
         $properties = ['foo', 'bar', 'baz'];
         $this->settings->setProperties($this->src, $this->dest, $properties);
@@ -31,6 +32,11 @@ class PopulateSettingsStorageTest extends TestCase
 
         $this->assertSame($properties, $this->settings->getProperties($this->src, $this->dest));
         $this->assertSame($properties, $this->settings->getProperties(get_class($this->src), get_class($this->dest)));
+
+        $this->settings->setProperties($this->src, $this->dest, null);
+
+        $this->assertNull($this->settings->getProperties($this->src, $this->dest));
+        $this->assertNull($this->settings->getProperties(get_class($this->src), get_class($this->dest)));
     }
 
     public function testSetMapping()

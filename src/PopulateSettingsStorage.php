@@ -17,9 +17,13 @@ class PopulateSettingsStorage implements PopulateSettingsStorageInterface
         return $this->properties[static::key($src, $dest)] ?? null;
     }
 
-    public function setProperties($src, $dest, array $properties): void
+    public function setProperties($src, $dest, ?array $properties): void
     {
-        $this->properties[static::key($src, $dest)] = $properties;
+        if (is_null($properties)) {
+            unset($this->properties[static::key($src, $dest)]);
+        } else {
+            $this->properties[static::key($src, $dest)] = $properties;
+        }
     }
 
     public function getMapping($src, $dest): array
