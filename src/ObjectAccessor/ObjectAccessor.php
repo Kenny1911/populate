@@ -64,7 +64,7 @@ class ObjectAccessor implements ObjectAccessorInterface
 
         return array_map(
             function (ReflectionProperty $prop) {
-                $prop->getName();
+                return $prop->getName();
             },
             $class->getProperties()
         );
