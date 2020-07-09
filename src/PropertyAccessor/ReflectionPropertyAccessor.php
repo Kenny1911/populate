@@ -26,19 +26,6 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
         $this->getProperty($src, $name)->setValue($src, $value);
     }
 
-    private function getProperty($src, string $name): ReflectionProperty
-    {
-        try {
-            $prop = new ReflectionProperty($src, $name);
-        } catch (ReflectionException $e) {
-            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        $prop->setAccessible(true);
-
-        return $prop;
-    }
-
     /**
      * @inheritDoc
      */
@@ -53,5 +40,18 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
     public function isWritable($src, string $name): bool
     {
         return property_exists($src, $name);
+    }
+
+    private function getProperty($src, string $name): ReflectionProperty
+    {
+        try {
+            $prop = new ReflectionProperty($src, $name);
+        } catch (ReflectionException $e) {
+            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        $prop->setAccessible(true);
+
+        return $prop;
     }
 }
