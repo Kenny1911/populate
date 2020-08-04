@@ -1,6 +1,8 @@
 {
     "name": "kenny1911/populate",
-    "description": "",
+    "description": "Library for automatic fill object properties from array or other object.",
+    "keywords": ["php", "populate", "fill", "object", "array"],
+    "homepage": "https://github.com/Kenny1911/populate",
     "authors": [
         {
             "name": "Kenny1911",
@@ -8,6 +10,7 @@
         }
     ],
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^7.1"
     },
