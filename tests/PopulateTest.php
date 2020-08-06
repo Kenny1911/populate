@@ -60,6 +60,33 @@ class PopulateTest extends TestCase
         $this->assertSame(789, $dest->getBaz());
     }
 
+    public function testPopulateFromArray()
+    {
+        $src = ['public' => 123, 'protected' => 456, 'private' => 789];
+
+        $dest = new class {
+            public $public;
+            protected $protected;
+            private $private;
+
+            public function getProtected()
+            {
+                return $this->protected;
+            }
+
+            public function getPrivate()
+            {
+                return $this->private;
+            }
+        };
+
+        $this->populate->populate($src, $dest);
+
+        $this->assertSame(123, $dest->public);
+        $this->assertSame(456, $dest->getProtected());
+        $this->assertSame(789, $dest->getPrivate());
+    }
+
     protected function setUp(): void
     {
         $this->src = new class {

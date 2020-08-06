@@ -18,6 +18,8 @@ class Populate implements PopulateInterface
 
     public function populate($src, $dest, ?array $properties = null, array $mapping = []): void
     {
-        $this->accessor->setData($dest, $this->accessor->getData($src, $properties, $mapping));
+        $data = is_object($src) ? $this->accessor->getData($src, $properties, $mapping) : $src;
+
+        $this->accessor->setData($dest, $data);
     }
 }
