@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Kenny1911\Populate\Tests;
+
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\Populate;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;

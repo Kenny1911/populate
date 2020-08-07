@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Kenny1911\Populate\Tests;
+
 use Kenny1911\Populate\Exception\FrozenException;
 use Kenny1911\Populate\FreezableInterface;
 use Kenny1911\Populate\FreezableTrait;

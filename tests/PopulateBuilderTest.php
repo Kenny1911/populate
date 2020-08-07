@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Kenny1911\Populate\Tests;
+
 use Kenny1911\Populate\AdvancedPopulate;
 use Kenny1911\Populate\Exception\LogicException;
 use Kenny1911\Populate\FreezablePopulateSettingsStorage;
@@ -15,6 +17,8 @@ use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use ReflectionProperty;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
