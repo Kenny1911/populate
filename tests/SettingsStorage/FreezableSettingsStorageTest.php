@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate\Tests;
+namespace Kenny1911\Populate\Tests\SettingsStorage;
 
 use Kenny1911\Populate\Exception\FrozenException;
-use Kenny1911\Populate\FreezablePopulateSettingsStorage;
-use Kenny1911\Populate\PopulateSettingsStorage;
+use Kenny1911\Populate\SettingsStorage\FreezableSettingsStorage;
+use Kenny1911\Populate\SettingsStorage\SettingsStorage;
 use PHPUnit\Framework\TestCase;
 
-class FreezablePopulateSettingsStorageTest extends TestCase
+class FreezableSettingsStorageTest extends TestCase
 {
     /** @var object */
     private $src;
@@ -17,7 +17,7 @@ class FreezablePopulateSettingsStorageTest extends TestCase
     /** @var object */
     private $dest;
 
-    /** @var FreezablePopulateSettingsStorage */
+    /** @var FreezableSettingsStorage */
     private $settings;
 
     public function testSetProperties()
@@ -31,7 +31,7 @@ class FreezablePopulateSettingsStorageTest extends TestCase
     public function testSetPropertiesFrozenStorage()
     {
         $this->expectException(FrozenException::class);
-        $this->expectExceptionMessage(FreezablePopulateSettingsStorage::FROZEN_STORAGE_MESSAGE);
+        $this->expectExceptionMessage(FreezableSettingsStorage::FROZEN_STORAGE_MESSAGE);
         $this->expectExceptionCode(0);
 
         $this->settings->freeze();
@@ -50,7 +50,7 @@ class FreezablePopulateSettingsStorageTest extends TestCase
     public function testSetMappingFrozenStorage()
     {
         $this->expectException(FrozenException::class);
-        $this->expectExceptionMessage(FreezablePopulateSettingsStorage::FROZEN_STORAGE_MESSAGE);
+        $this->expectExceptionMessage(FreezableSettingsStorage::FROZEN_STORAGE_MESSAGE);
         $this->expectExceptionCode(0);
 
         $this->settings->freeze();
@@ -63,6 +63,6 @@ class FreezablePopulateSettingsStorageTest extends TestCase
         $this->src = new class {};
         $this->dest = new class {};
 
-        $this->settings = new FreezablePopulateSettingsStorage(new PopulateSettingsStorage());
+        $this->settings = new FreezableSettingsStorage(new SettingsStorage());
     }
 }

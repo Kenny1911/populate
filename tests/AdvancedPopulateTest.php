@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Kenny1911\Populate\AdvancedPopulate;
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\Populate;
-use Kenny1911\Populate\PopulateSettingsStorage;
+use Kenny1911\Populate\SettingsStorage\SettingsStorage;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +17,7 @@ class AdvancedPopulateTest extends TestCase
     /** @var object */
     private $dest;
 
-    /** @var PopulateSettingsStorage */
+    /** @var SettingsStorage */
     private $settings;
 
     /** @var AdvancedPopulate */
@@ -117,7 +117,7 @@ class AdvancedPopulateTest extends TestCase
             }
         };
 
-        $this->settings = new PopulateSettingsStorage();
+        $this->settings = new SettingsStorage();
         $this->populate = new AdvancedPopulate(
             new Populate(
                 new ObjectAccessor(

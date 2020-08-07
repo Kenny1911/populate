@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate;
+namespace Kenny1911\Populate\SettingsStorage;
 
-class PopulateSettingsStorage implements PopulateSettingsStorageInterface
+class SettingsStorage implements SettingsStorageInterface
 {
     /** @var array<string> */
     protected $properties = [];

@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate;
+namespace Kenny1911\Populate\SettingsStorage;
 
-class FreezablePopulateSettingsStorage implements PopulateSettingsStorageInterface, FreezableInterface
+use Kenny1911\Populate\Freezable\FreezableInterface;
+use Kenny1911\Populate\Freezable\FreezableTrait;
+
+class FreezableSettingsStorage implements SettingsStorageInterface, FreezableInterface
 {
     use FreezableTrait;
 
     const FROZEN_STORAGE_MESSAGE = 'Storage cannot be changed after frozen.';
 
-    /** @var PopulateSettingsStorageInterface */
+    /** @var SettingsStorageInterface */
     protected $settings;
 
-    public function __construct(PopulateSettingsStorageInterface $storage)
+    public function __construct(SettingsStorageInterface $storage)
     {
         $this->settings = $storage;
     }

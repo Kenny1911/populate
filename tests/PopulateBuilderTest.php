@@ -6,13 +6,13 @@ namespace Kenny1911\Populate\Tests;
 
 use Kenny1911\Populate\AdvancedPopulate;
 use Kenny1911\Populate\Exception\LogicException;
-use Kenny1911\Populate\FreezablePopulateSettingsStorage;
+use Kenny1911\Populate\SettingsStorage\FreezableSettingsStorage;
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\Populate;
 use Kenny1911\Populate\PopulateBuilder;
 use Kenny1911\Populate\PopulateInterface;
-use Kenny1911\Populate\PopulateSettingsStorage;
-use Kenny1911\Populate\PopulateSettingsStorageInterface;
+use Kenny1911\Populate\SettingsStorage\SettingsStorage;
+use Kenny1911\Populate\SettingsStorage\SettingsStorageInterface;
 use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
@@ -120,7 +120,7 @@ class PopulateBuilderTest extends TestCase
         $this->assertInstanceOf(Populate::class, $populate);
         $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
         $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-        $this->assertInstanceOf(PopulateSettingsStorage::class, $settings);
+        $this->assertInstanceOf(SettingsStorage::class, $settings);
         $this->assertSame(['prop1', 'prop2', 'prop3'], $settings->getProperties('Foo', 'Bar'));
         $this->assertSame(['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'], $settings->getMapping('Foo', 'Bar'));
     }
@@ -145,8 +145,8 @@ class PopulateBuilderTest extends TestCase
         $this->assertInstanceOf(Populate::class, $populate);
         $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
         $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-        $this->assertInstanceOf(FreezablePopulateSettingsStorage::class, $freezableSettings);
-        $this->assertInstanceOf(PopulateSettingsStorage::class, $settings);
+        $this->assertInstanceOf(FreezableSettingsStorage::class, $freezableSettings);
+        $this->assertInstanceOf(SettingsStorage::class, $settings);
         $this->assertSame(['prop1', 'prop2', 'prop3'], $freezableSettings->getProperties('Foo', 'Bar'));
         $this->assertSame(['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'], $settings->getMapping('Foo', 'Bar'));
     }
@@ -214,14 +214,14 @@ class PopulateBuilderTest extends TestCase
         return $this->getProperty($accessor, 'accessor');
     }
 
-    private function getSettings(AdvancedPopulate $populate): PopulateSettingsStorageInterface
+    private function getSettings(AdvancedPopulate $populate): SettingsStorageInterface
     {
         return $this->getProperty($populate, 'settings');
     }
 
-    private function getOriginalSettings(PopulateSettingsStorageInterface $settings): PopulateSettingsStorageInterface
+    private function getOriginalSettings(SettingsStorageInterface $settings): SettingsStorageInterface
     {
-        if ($settings instanceof FreezablePopulateSettingsStorage) {
+        if ($settings instanceof FreezableSettingsStorage) {
             return $this->getProperty($settings, 'settings');
         }
 
