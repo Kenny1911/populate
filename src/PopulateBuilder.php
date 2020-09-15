@@ -10,6 +10,9 @@ use Kenny1911\Populate\ObjectAccessor\ObjectAccessorInterface;
 use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
+use Kenny1911\Populate\SettingsStorage\FreezableSettingsStorage;
+use Kenny1911\Populate\SettingsStorage\SettingsStorage;
+use Kenny1911\Populate\SettingsStorage\SettingsStorageInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface as SymfonyPropertyAccessorInterface;
 
 class PopulateBuilder
@@ -30,7 +33,7 @@ class PopulateBuilder
     /** @var SymfonyPropertyAccessorInterface|null */
     protected $symfonyPropertyAccessor;
 
-    /** @var PopulateSettingsStorageInterface|null */
+    /** @var SettingsStorageInterface|null */
     protected $settings;
 
     /** @var bool */
@@ -53,7 +56,7 @@ class PopulateBuilder
             $settings = $this->settings;
 
             if ($this->freezeSettings) {
-                $settings = new FreezablePopulateSettingsStorage($settings);
+                $settings = new FreezableSettingsStorage($settings);
                 $settings->freeze();
             }
 
@@ -142,7 +145,7 @@ class PopulateBuilder
     protected function initSettingsStorage(): void
     {
         if (!$this->settings) {
-            $this->settings = new PopulateSettingsStorage();
+            $this->settings = new SettingsStorage();
         }
     }
 

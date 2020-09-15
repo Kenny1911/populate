@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate;
 
+use Kenny1911\Populate\SettingsStorage\SettingsStorageInterface;
+
 class AdvancedPopulate implements PopulateInterface
 {
     /** @var PopulateInterface */
     protected $populate;
 
-    /** @var PopulateSettingsStorageInterface */
+    /** @var SettingsStorageInterface */
     protected $settings;
 
-    public function __construct(PopulateInterface $populate, PopulateSettingsStorageInterface $settings)
+    public function __construct(PopulateInterface $populate, SettingsStorageInterface $settings)
     {
         $this->populate = $populate;
         $this->settings = $settings;

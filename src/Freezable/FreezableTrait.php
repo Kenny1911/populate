@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate;
+namespace Kenny1911\Populate\Freezable;
 
 use Kenny1911\Populate\Exception\FrozenException;
 

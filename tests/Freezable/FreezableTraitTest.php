@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Kenny1911\Populate\Tests\Freezable;
+
 use Kenny1911\Populate\Exception\FrozenException;
-use Kenny1911\Populate\FreezableInterface;
-use Kenny1911\Populate\FreezableTrait;
+use Kenny1911\Populate\Freezable\FreezableInterface;
+use Kenny1911\Populate\Freezable\FreezableTrait;
 use PHPUnit\Framework\TestCase;
 
 class FreezableTraitTest extends TestCase

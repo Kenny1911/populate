@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate;
+namespace Kenny1911\Populate\SettingsStorage;
 
-interface PopulateSettingsStorageInterface
+interface SettingsStorageInterface
 {
     /**
      * @param object|string $src

@@ -2,6 +2,12 @@
 
 `PHP Populate` is a library for fill attributes from source object to destination object.
 
+## Install
+
+```bash
+composer require kenny1911/populate
+```
+
 ## Basic components
 
 - `PropertyAccessorInterface` - interface for read and write object attribute value. It has two implementations:

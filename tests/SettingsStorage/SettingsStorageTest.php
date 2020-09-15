@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-use Kenny1911\Populate\PopulateSettingsStorage;
+namespace Kenny1911\Populate\Tests\SettingsStorage;
+
+use Kenny1911\Populate\SettingsStorage\SettingsStorage;
 use PHPUnit\Framework\TestCase;
 
-class PopulateSettingsStorageTest extends TestCase
+class SettingsStorageTest extends TestCase
 {
     /** @var object */
     private $src;
@@ -13,7 +15,7 @@ class PopulateSettingsStorageTest extends TestCase
     /** @var object */
     private $dest;
 
-    /** @var PopulateSettingsStorage */
+    /** @var SettingsStorage */
     private $settings;
 
     public function testSetProperties()
@@ -60,6 +62,6 @@ class PopulateSettingsStorageTest extends TestCase
     {
         $this->src = new class {};
         $this->dest = new class {};
-        $this->settings = new PopulateSettingsStorage();
+        $this->settings = new SettingsStorage();
     }
 }
