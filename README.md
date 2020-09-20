@@ -18,6 +18,9 @@ composer require kenny1911/populate
 - `ObjectAccessorInterface` - interface for export object properties to array and set object properties from data array.
   - `ObjectAccessor` - implementation of `ObjectAccessorInterface`.
 
+- `PropertiesExtractorInterface` - interface for extract properties from an object.
+  - `PropertiesExtractor` - component for extracting all object properties.
+
 - `FreezableInterface` - interface for freeze object.
   - `FreezableTrait` - implementation of `FreezableInterface`.
 
