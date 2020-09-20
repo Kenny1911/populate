@@ -4,20 +4,25 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\ObjectAccessor;
 
-use Kenny1911\Populate\Exception\RuntimeException;
+use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractor;
+use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractorInterface;
 use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
-use ReflectionClass;
-use ReflectionException;
 use ReflectionProperty;
 
 class ObjectAccessor implements ObjectAccessorInterface
 {
     /** @var PropertyAccessorInterface */
-    protected $accessor;
+    private $accessor;
 
-    public function __construct(PropertyAccessorInterface $accessor)
+    private $propertiesExtractor;
+
+    public function __construct(
+        PropertyAccessorInterface $accessor,
+        ?PropertiesExtractorInterface $propertiesExtractor = null
+    )
     {
         $this->accessor = $accessor;
+        $this->propertiesExtractor = $propertiesExtractor ?? new PropertiesExtractor();
     }
 
     /**
@@ -27,7 +32,7 @@ class ObjectAccessor implements ObjectAccessorInterface
     {
         $data = [];
 
-        foreach ($this->getProperties($src) as $prop) {
+        foreach ($this->getProperties($src, $properties) as $prop) {
             if ((is_null($properties) || in_array($prop, $properties)) && $this->accessor->isReadable($src, $prop)) {
                 $key = $mapping[$prop] ?? $prop;
                 $data[$key] = $this->accessor->getValue($src, $prop);
@@ -51,22 +56,25 @@ class ObjectAccessor implements ObjectAccessorInterface
 
     /**
      * @param object $src
+     * @param string[]|null $filter
      *
      * @return string[]
      */
-    protected function getProperties($src): array
+    protected function getProperties($src, ?array $filter): array
     {
-        try {
-            $class = new ReflectionClass($src);
-        } catch (ReflectionException $e) {
-            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        return array_map(
+        $properties = array_map(
             function (ReflectionProperty $prop) {
                 return $prop->getName();
             },
-            $class->getProperties()
+            $this->propertiesExtractor->getProperties($src)
         );
+
+        if (is_array($filter)) {
+            $properties = array_filter($properties, function ($property) use (&$filter) {
+                return in_array($property, $filter);
+            });
+        }
+
+        return $properties;
     }
 }
