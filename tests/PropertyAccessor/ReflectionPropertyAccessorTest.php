@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Tests\PropertyAccessor;
 
-use Kenny1911\Populate\Exception\RuntimeException;
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotReadableException;
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotWritableException;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use PHPUnit\Framework\TestCase;
 
@@ -23,10 +24,10 @@ class ReflectionPropertyAccessorTest extends TestCase
         $this->assertSame(789, $this->accessor->getValue($this->src, 'private'));
     }
 
-    public function testGetValueInvalidProperty()
+    public function testGetValuePropertyNotReadableException()
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property class@anonymous::$invalid does not exist');
+        $this->expectException(PropertyNotReadableException::class);
+        $this->expectExceptionMessage(sprintf('Property %s::$invalid is not readable.', get_class($this->src)));
 
         $this->accessor->getValue($this->src, 'invalid');
     }
@@ -42,10 +43,10 @@ class ReflectionPropertyAccessorTest extends TestCase
         $this->assertSame(987, $this->src->getPrivate());
     }
 
-    public function testSetValueInvalidProperty()
+    public function testSetValuePropertyNotWritableException()
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Property class@anonymous::$invalid does not exist');
+        $this->expectException(PropertyNotWritableException::class);
+        $this->expectExceptionMessage(sprintf('Property %s::$invalid is not writable.', get_class($this->src)));
 
         $this->accessor->setValue($this->src, 'invalid', 123);
     }
