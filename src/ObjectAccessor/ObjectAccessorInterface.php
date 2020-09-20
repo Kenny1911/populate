@@ -9,9 +9,9 @@ interface ObjectAccessorInterface
     /**
      * Get associative array with properties of object.
      *
-     * @param object     $src
-     * @param array|null $properties
-     * @param array      $mapping
+     * @param object $src
+     * @param string[]|null $properties
+     * @param array $mapping
      *
      * @return array
      */
