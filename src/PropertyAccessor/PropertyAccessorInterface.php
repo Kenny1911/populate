@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\PropertyAccessor;
 
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotReadableException;
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotWritableException;
+
 interface PropertyAccessorInterface
 {
     /**
@@ -13,6 +16,7 @@ interface PropertyAccessorInterface
      * @param string $name
      *
      * @return mixed
+     * @throws PropertyNotReadableException
      */
     public function getValue($src, string $name);
 
@@ -32,6 +36,8 @@ interface PropertyAccessorInterface
      * @param object $src
      * @param string $name
      * @param        $value
+     *
+     * @throws PropertyNotWritableException
      */
     public function setValue($src, string $name, $value): void;
 
