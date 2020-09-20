@@ -14,6 +14,9 @@ class ReflectionPropertyAccessorTest extends TestCase
     /** @var ReflectionPropertyAccessor */
     private $accessor;
 
+    /** @var ReflectionPropertyAccessor */
+    private $accessorDisabledExceptions;
+
     /** @var object */
     private $src;
 
@@ -22,6 +25,14 @@ class ReflectionPropertyAccessorTest extends TestCase
         $this->assertSame(123, $this->accessor->getValue($this->src, 'public'));
         $this->assertSame(456, $this->accessor->getValue($this->src, 'protected'));
         $this->assertSame(789, $this->accessor->getValue($this->src, 'private'));
+    }
+
+    public function testGetValueDisabledExceptions()
+    {
+        $this->assertSame(123, $this->accessorDisabledExceptions->getValue($this->src, 'public'));
+        $this->assertSame(456, $this->accessorDisabledExceptions->getValue($this->src, 'protected'));
+        $this->assertSame(789, $this->accessorDisabledExceptions->getValue($this->src, 'private'));
+        $this->assertNull($this->accessorDisabledExceptions->getValue($this->src, 'invalid'));
     }
 
     public function testGetValuePropertyNotReadableException()
@@ -37,6 +48,18 @@ class ReflectionPropertyAccessorTest extends TestCase
         $this->accessor->setValue($this->src, 'public', 321);
         $this->accessor->setValue($this->src, 'protected', 654);
         $this->accessor->setValue($this->src, 'private', 987);
+
+        $this->assertSame(321, $this->src->public);
+        $this->assertSame(654, $this->src->getProtected());
+        $this->assertSame(987, $this->src->getPrivate());
+    }
+
+    public function testSetValueDisabledExceptions()
+    {
+        $this->accessorDisabledExceptions->setValue($this->src, 'public', 321);
+        $this->accessorDisabledExceptions->setValue($this->src, 'protected', 654);
+        $this->accessorDisabledExceptions->setValue($this->src, 'private', 987);
+        $this->accessorDisabledExceptions->setValue($this->src, 'invalid', 111);
 
         $this->assertSame(321, $this->src->public);
         $this->assertSame(654, $this->src->getProtected());
@@ -86,5 +109,6 @@ class ReflectionPropertyAccessorTest extends TestCase
         };
 
         $this->accessor = new ReflectionPropertyAccessor();
+        $this->accessorDisabledExceptions = new ReflectionPropertyAccessor(true);
     }
 }

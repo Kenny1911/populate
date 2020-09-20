@@ -11,6 +11,14 @@ use ReflectionProperty;
 
 class ReflectionPropertyAccessor implements PropertyAccessorInterface
 {
+    /** @var bool */
+    private $disableExceptions;
+
+    public function __construct(bool $disableExceptions = false)
+    {
+        $this->disableExceptions = $disableExceptions;
+    }
+
     /**
      * @inheritDoc
      */
@@ -19,7 +27,11 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
         try {
             return $this->getProperty($src, $name)->getValue($src);
         } catch (ReflectionException $e) {
-            throw new PropertyNotReadableException(get_class($src), $name, $e->getCode(), $e);
+            if ($this->disableExceptions) {
+                return null;
+            } else {
+                throw new PropertyNotReadableException(get_class($src), $name, $e->getCode(), $e);
+            }
         }
     }
 
@@ -31,7 +43,9 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
         try {
             $this->getProperty($src, $name)->setValue($src, $value);
         } catch (ReflectionException $e) {
-            throw new PropertyNotWritableException(get_class($src), $name, $e->getCode(), $e);
+            if(!$this->disableExceptions) {
+                throw new PropertyNotWritableException(get_class($src), $name, $e->getCode(), $e);
+            }
         }
     }
 
