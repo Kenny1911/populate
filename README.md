@@ -13,6 +13,7 @@ composer require kenny1911/populate
 - `PropertyAccessorInterface` - interface for read and write object attribute value. It has two implementations:
   - `ReflectionPropertyAccessor` - property accessor, based on `PHP Reflection API`.
   - `SymfonyPropertyAccessor` - bridge to `symfony/property-access` package.
+  - `ChainPropertyAccessor` - chain of several `PropertyAccessorInterface`
 
 - `ObjectAccessorInterface` - interface for export object properties to array and set object properties from data array.
   - `ObjectAccessor` - implementation of `ObjectAccessorInterface`.
