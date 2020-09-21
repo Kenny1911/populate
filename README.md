@@ -39,7 +39,9 @@ composer require kenny1911/populate
 - `PopulateBuilder` - builder for `PopulateInterface` object.
 
 - `Utils` - additional utils.
-  - `UninitializedPropertiesTrait` - trait for returning empty value of object property, if it uninitialized.
+  - `UninitializedPropertiesHelper` - class, contains static helper methods:
+    - `isInitialized` - check, that object property is initialized.
+    - `isTyped` - check, that object property is typed.
 
 ## Usage
 
