@@ -13,9 +13,15 @@ composer require kenny1911/populate
 - `PropertyAccessorInterface` - interface for read and write object attribute value. It has two implementations:
   - `ReflectionPropertyAccessor` - property accessor, based on `PHP Reflection API`.
   - `SymfonyPropertyAccessor` - bridge to `symfony/property-access` package.
+  - `ChainPropertyAccessor` - chain of several `PropertyAccessorInterface`
 
 - `ObjectAccessorInterface` - interface for export object properties to array and set object properties from data array.
   - `ObjectAccessor` - implementation of `ObjectAccessorInterface`.
+
+- `PropertiesExtractorInterface` - interface for extract properties from an object.
+  - `PropertiesExtractor` - component for extracting all object properties.
+  - `UninitializedPropertiesExtractor` - decorator of `PropertiesExtractorInterface` for filtering properties with
+  uninitialized state. Used since PHP 7.4.
 
 - `FreezableInterface` - interface for freeze object.
   - `FreezableTrait` - implementation of `FreezableInterface`.
@@ -31,6 +37,11 @@ composer require kenny1911/populate
   - `AdvancedPopulate` - decorator of `PopulateInterface`, used `PopulateSettingsStorageInterface` as default settings.
 
 - `PopulateBuilder` - builder for `PopulateInterface` object.
+
+- `Utils` - additional utils.
+  - `UninitializedPropertiesHelper` - class, contains static helper methods:
+    - `isInitialized` - check, that object property is initialized.
+    - `isTyped` - check, that object property is typed.
 
 ## Usage
 

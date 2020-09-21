@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Tests\PropertyAccessor;
 
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotReadableException;
+use Kenny1911\Populate\Exception\PropertyAccessor\PropertyNotWritableException;
 use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -21,12 +23,22 @@ class SymfonyPropertyAccessorTest extends TestCase
         $this->assertSame(123, $this->accessor->getValue($this->src, 'public'));
         $this->assertSame(456, $this->accessor->getValue($this->src, 'protected'));
         $this->assertSame(789, $this->accessor->getValue($this->src, 'private'));
-        $this->assertNull($this->accessor->getValue($this->src, 'notAvailable'));
+    }
 
+    public function testGetValuePropertyNotReadableException()
+    {
+        $this->expectException(PropertyNotReadableException::class);
+        $this->expectErrorMessage(sprintf('Property %s::$notAvailable is not readable.', get_class($this->src)));
+
+        $this->accessor->getValue($this->src, 'notAvailable');
+    }
+
+    public function testIsReadable()
+    {
         $this->assertTrue($this->accessor->isReadable($this->src, 'public'));
         $this->assertTrue($this->accessor->isReadable($this->src, 'protected'));
         $this->assertTrue($this->accessor->isReadable($this->src, 'private'));
-        $this->assertTrue($this->accessor->isReadable($this->src, 'notAvailable'));
+        $this->assertFalse($this->accessor->isReadable($this->src, 'notAvailable'));
     }
 
     public function testSetValue()
@@ -34,14 +46,22 @@ class SymfonyPropertyAccessorTest extends TestCase
         $this->accessor->setValue($this->src, 'public', 321);
         $this->accessor->setValue($this->src, 'protected', 654);
         $this->accessor->setValue($this->src, 'private', 987);
-        $this->accessor->setValue($this->src, 'notAvailable', 111);
 
         $this->assertSame(321, $this->accessor->getValue($this->src, 'public'));
         $this->assertSame(654, $this->accessor->getValue($this->src, 'protected'));
         $this->assertSame(987, $this->accessor->getValue($this->src, 'private'));
-        $this->assertNull($this->accessor->getValue($this->src, 'notAvailable'));
-        $this->assertSame(000, $this->src->getNotAvailableHiddenGetter());
+    }
 
+    public function testSetValuePropertyNotWritableException()
+    {
+        $this->expectException(PropertyNotWritableException::class);
+        $this->expectErrorMessage(sprintf('Property %s::$notAvailable is not writable.', get_class($this->src)));
+
+        $this->accessor->setValue($this->src, 'notAvailable', 111);
+    }
+
+    public function testIsWritable()
+    {
         $this->assertTrue($this->accessor->isWritable($this->src, 'public'));
         $this->assertTrue($this->accessor->isWritable($this->src, 'protected'));
         $this->assertTrue($this->accessor->isWritable($this->src, 'private'));
@@ -82,12 +102,6 @@ class SymfonyPropertyAccessorTest extends TestCase
             }
         };
 
-        $symfonyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-            ->enableMagicCall()
-            ->disableExceptionOnInvalidIndex()
-            ->disableExceptionOnInvalidPropertyPath()
-            ->getPropertyAccessor()
-        ;
-        $this->accessor = new SymfonyPropertyAccessor($symfonyAccessor);
+        $this->accessor = new SymfonyPropertyAccessor(PropertyAccess::createPropertyAccessor());
     }
 }

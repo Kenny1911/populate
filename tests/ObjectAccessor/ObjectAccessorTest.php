@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Tests\ObjectAccessor;
 
-use Kenny1911\Populate\Exception\RuntimeException;
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 
 class ObjectAccessorTest extends TestCase
 {
@@ -58,17 +56,6 @@ class ObjectAccessorTest extends TestCase
         ];
 
         $this->assertSame($expected, $this->accessor->getData($this->src));
-    }
-
-    public function testGetPropertiesRuntimeException()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Class Invalid does not exist');
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $method = new ReflectionMethod($this->accessor, 'getProperties');
-        $method->setAccessible(true);
-        $method->invoke($this->accessor, 'Invalid');
     }
 
     protected function setUp(): void
