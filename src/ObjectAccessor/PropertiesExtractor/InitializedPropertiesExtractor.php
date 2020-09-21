@@ -26,11 +26,15 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          */
         public function getProperties($src): array
         {
-            return array_filter(
-                $this->internal->getProperties($src),
-                function (ReflectionProperty $property) use ($src) {
-                    return $property->hasType() ? $property->isInitialized($src) : true;
-                }
+            return array_values(
+                array_filter(
+                    $this->internal->getProperties($src),
+                    function (ReflectionProperty $property) use ($src) {
+                        $property->setAccessible(true);
+
+                        return $property->hasType() ? $property->isInitialized($src) : true;
+                    }
+                )
             );
         }
     }
