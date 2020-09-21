@@ -29,7 +29,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
             return array_filter(
                 $this->internal->getProperties($src),
                 function (ReflectionProperty $property) use ($src) {
-                    return $property->isInitialized($src);
+                    return $property->hasType() ? $property->isInitialized($src) : true;
                 }
             );
         }

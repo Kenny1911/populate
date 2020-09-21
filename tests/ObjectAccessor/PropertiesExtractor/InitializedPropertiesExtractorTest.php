@@ -25,6 +25,10 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
 
             $this->assertSame(['foo', 'bar', 'baz'], $this->filterProperties($internalExtractor->getProperties($src)));
             $this->assertSame(['foo', 'bar'], $this->filterProperties($extractor->getProperties($src)));
+
+            unset($src->foo);
+
+            $this->assertSame(['foo', 'bar'], $this->filterProperties($extractor->getProperties($src)));
         }
 
         /**
