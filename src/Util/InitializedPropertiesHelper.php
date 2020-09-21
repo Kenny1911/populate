@@ -20,7 +20,10 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          */
         public static function isInitialized($obj, string $prop): bool
         {
-            return static::getProperty($obj, $prop)->isInitialized($obj);
+            $ref = static::getProperty($obj, $prop);
+            $ref->setAccessible(true);
+
+            return $ref->isInitialized($obj);
         }
 
         /**
