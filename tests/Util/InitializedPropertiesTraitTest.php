@@ -7,11 +7,11 @@ namespace Kenny1911\Populate\Tests\Util;
 use DateTime;
 use Error;
 use Kenny1911\Populate\Exception\RuntimeException;
-use Kenny1911\Populate\Util\UninitializedPropertiesTrait;
+use Kenny1911\Populate\Util\InitializedPropertiesTrait;
 use PHPUnit\Framework\TestCase;
 
 if (version_compare(phpversion(), '7.4.0', '>=')) {
-    class UninitializedPropertiesTraitTest extends TestCase
+    class InitializedPropertiesTraitTest extends TestCase
     {
         private $obj;
 
@@ -35,6 +35,13 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
             $this->obj->invalid;
         }
 
+        public function testUnsetNotTypedProperty()
+        {
+            unset($this->obj->notTyped);
+
+            $this->assertNull($this->obj->notTyped);
+        }
+
         public function testPropertyNotInitialized()
         {
             $this->expectException(Error::class);
@@ -49,7 +56,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
         {
             $this->obj = new class
             {
-                use UninitializedPropertiesTrait;
+                use InitializedPropertiesTrait;
 
                 public $notTyped;
 

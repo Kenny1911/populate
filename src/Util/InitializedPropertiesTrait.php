@@ -10,13 +10,12 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
-use ReflectionType;
 
 /**
  * @codeCoverageIgnore
  */
 if (version_compare(phpversion(), '7.4.0', '>=')) {
-    trait UninitializedPropertiesTrait
+    trait InitializedPropertiesTrait
     {
         public function __construct()
         {
@@ -31,31 +30,33 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
                 throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
 
+            if (!$property->hasType()) {
+                return null;
+            }
+
             $type = $property->getType();
 
-            if ($type instanceof ReflectionType) {
-                if ($type->allowsNull()) {
-                    return null;
-                }
+            if ($type->allowsNull()) {
+                return null;
+            }
 
-                $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string)$type;
+            $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string)$type;
 
-                switch ($typeName) {
-                    case 'int':
-                        return 0;
+            switch ($typeName) {
+                case 'int':
+                    return 0;
 
-                    case 'float':
-                        return 0.0;
+                case 'float':
+                    return 0.0;
 
-                    case 'string':
-                        return '';
+                case 'string':
+                    return '';
 
-                    case 'bool':
-                        return false;
+                case 'bool':
+                    return false;
 
-                    case 'array':
-                        return [];
-                }
+                case 'array':
+                    return [];
             }
 
             throw new Error(
@@ -69,7 +70,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
             $class = new ReflectionClass($this);
 
             foreach ($class->getProperties() as $property) {
-                if (!$property->isInitialized($this)) {
+                if ($property->hasType() && !$property->isInitialized($this)) {
                     unset($this->{$property->getName()});
                 }
             }
