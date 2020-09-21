@@ -18,6 +18,6 @@ if (!function_exists('is_initialized') && version_compare(phpversion(), '7.4.0',
         }
 
         /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-        return !is_null($prop->getType()) ? $prop->isInitialized($obj) : true;
+        return $prop->hasType() ? $prop->isInitialized($obj) : true;
     }
 }
