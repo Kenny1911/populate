@@ -19,11 +19,15 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
                 public $notTyped;
                 public string $initialized = 'Foo';
                 public string $notInitialized;
+                protected string $protected = 'protected';
+                protected string $protectedNotInitialized;
             };
 
             $this->assertTrue(InitializedPropertiesHelper::isInitialized($obj, 'notTyped'));
             $this->assertTrue(InitializedPropertiesHelper::isInitialized($obj, 'initialized'));
             $this->assertFalse(InitializedPropertiesHelper::isInitialized($obj, 'notInitialized'));
+            $this->assertTrue(InitializedPropertiesHelper::isInitialized($obj, 'protected'));
+            $this->assertFalse(InitializedPropertiesHelper::isInitialized($obj, 'protectedNotInitialized'));
 
             unset($obj->notTyped);
             unset($obj->initialized);
@@ -49,11 +53,17 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
                 public $foo;
                 public string $bar;
                 public string $baz = 'Baz';
+                protected $protected;
+                protected string $protectedTyped = 'protected';
+                protected string $protectedTypedNotInitialized;
             };
 
             $this->assertFalse(InitializedPropertiesHelper::isTyped($obj, 'foo'));
             $this->assertTrue(InitializedPropertiesHelper::isTyped($obj, 'bar'));
             $this->assertTrue(InitializedPropertiesHelper::isTyped($obj, 'baz'));
+            $this->assertFalse(InitializedPropertiesHelper::isTyped($obj, 'protected'));
+            $this->assertTrue(InitializedPropertiesHelper::isTyped($obj, 'protectedTyped'));
+            $this->assertTrue(InitializedPropertiesHelper::isTyped($obj, 'protectedTypedNotInitialized'));
         }
 
         public function testIsTypedInvalidArgument()

@@ -18,17 +18,22 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
                 public $foo = 'Foo';
                 public string $bar = 'Bar';
                 public string $baz;
+                protected string $protected = 'protected';
+                protected string $protectedNotInitialized;
             };
 
             $internalExtractor = new PropertiesExtractor();
             $extractor = new InitializedPropertiesExtractor($internalExtractor);
 
-            $this->assertSame(['foo', 'bar', 'baz'], $this->filterProperties($internalExtractor->getProperties($src)));
-            $this->assertSame(['foo', 'bar'], $this->filterProperties($extractor->getProperties($src)));
+            $this->assertSame(
+                ['foo', 'bar', 'baz', 'protected', 'protectedNotInitialized'],
+                $this->filterProperties($internalExtractor->getProperties($src))
+            );
+            $this->assertSame(['foo', 'bar', 'protected'], $this->filterProperties($extractor->getProperties($src)));
 
             unset($src->foo);
 
-            $this->assertSame(['foo', 'bar'], $this->filterProperties($extractor->getProperties($src)));
+            $this->assertSame(['foo', 'bar', 'protected'], $this->filterProperties($extractor->getProperties($src)));
         }
 
         /**
