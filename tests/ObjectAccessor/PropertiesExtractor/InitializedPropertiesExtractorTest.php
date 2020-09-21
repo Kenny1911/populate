@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Tests\ObjectAccessor\PropertiesExtractor;
 
+use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\InitializedPropertiesExtractor;
 use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractor;
-use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\UninitializedPropertiesExtractor;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 if (version_compare(phpversion(), '7.4.0', '>=')) {
-    class UninitializedPropertiesExtractorTest extends TestCase
+    class InitializedPropertiesExtractorTest extends TestCase
     {
         public function test()
         {
@@ -21,7 +21,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
             };
 
             $internalExtractor = new PropertiesExtractor();
-            $extractor = new UninitializedPropertiesExtractor($internalExtractor);
+            $extractor = new InitializedPropertiesExtractor($internalExtractor);
 
             $this->assertSame(['foo', 'bar', 'baz'], $this->filterProperties($internalExtractor->getProperties($src)));
             $this->assertSame(['foo', 'bar'], $this->filterProperties($extractor->getProperties($src)));

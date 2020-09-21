@@ -12,7 +12,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
      *
      * @since 7.4 Only typed properties can be uninitialized. This feature has been available since PHP version 7.4.
      */
-    class UninitializedPropertiesExtractor implements PropertiesExtractorInterface
+    class InitializedPropertiesExtractor implements PropertiesExtractorInterface
     {
         private $internal;
 
