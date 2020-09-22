@@ -22,6 +22,7 @@ composer require kenny1911/populate
   - `PropertiesExtractor` - component for extracting all object properties.
   - `UninitializedPropertiesExtractor` - decorator of `PropertiesExtractorInterface` for filtering properties with
   uninitialized state. Used since PHP 7.4.
+  - `NonStaticPropertiesExtractor` - decorator of `PropertiesExtractorInterface` for filtering static properties.
 
 - `FreezableInterface` - interface for freeze object.
   - `FreezableTrait` - implementation of `FreezableInterface`.
