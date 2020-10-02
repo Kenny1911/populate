@@ -16,7 +16,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.2",
-        "symfony/property-access": "^4.0.0|^5.0.0"
+        "symfony/property-access": "^4.0.0|^5.0.0",
+        "doctrine/persistence": "^2.0"
     },
     "suggest": {
         "symfony/property-access": "Required for using Kenny1911\\Populate\\PropertyAccessor\\SymfonyPropertyAccessor"
