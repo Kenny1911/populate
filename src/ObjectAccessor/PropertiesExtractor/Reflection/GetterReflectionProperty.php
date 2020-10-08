@@ -15,9 +15,6 @@ class GetterReflectionProperty extends ReflectionProperty
     /** @var ReflectionMethod */
     private $getter;
 
-    /** @var string */
-    private $name;
-
     /** @noinspection PhpMissingParentConstructorInspection */
     /**
      * GetterReflectionProperty constructor.
@@ -45,8 +42,7 @@ class GetterReflectionProperty extends ReflectionProperty
         return $this->getter->invoke($object);
     }
 
-    /** @noinspection PhpSignatureMismatchDuringInheritanceInspection */
-    public function setValue($objectOrValue, $value)
+    public function setValue($objectOrValue, $value = null)
     {
         throw new RuntimeException('Cannot set value of property.');
     }
@@ -106,8 +102,7 @@ class GetterReflectionProperty extends ReflectionProperty
         return $this->getter->hasReturnType();
     }
 
-    /** @noinspection PhpSignatureMismatchDuringInheritanceInspection */
-    public function isInitialized($object)
+    public function isInitialized($object = null)
     {
         return true;
     }
