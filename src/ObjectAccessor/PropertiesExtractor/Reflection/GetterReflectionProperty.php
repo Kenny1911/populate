@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor;
+namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\Reflection;
 
 use Kenny1911\Populate\Exception\RuntimeException;
 use ReflectionMethod;
