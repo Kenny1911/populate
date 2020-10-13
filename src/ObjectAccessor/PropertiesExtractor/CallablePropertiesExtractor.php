@@ -19,10 +19,10 @@ class CallablePropertiesExtractor implements PropertiesExtractorInterface
     /**
      * @inheritDoc
      */
-    public function getProperties($src): array
+    public function getProperties(string $class): array
     {
         return array_values(
-            array_filter($this->internal->getProperties($src), $this->callback)
+            array_filter($this->internal->getProperties($class), $this->callback)
         );
     }
 }
