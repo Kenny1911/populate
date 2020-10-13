@@ -7,7 +7,6 @@ namespace Kenny1911\Populate\Tests\ObjectAccessor\PropertiesExtractor;
 use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\CallablePropertiesExtractor;
 use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractor;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 class CallablePropertiesExtractorTest extends TestCase
 {
@@ -15,8 +14,8 @@ class CallablePropertiesExtractorTest extends TestCase
     {
         $extractor = new CallablePropertiesExtractor(
             new PropertiesExtractor(),
-            function(ReflectionProperty $property) {
-                return in_array($property->getName(), ['foo', 'baz']);
+            function(string $property) {
+                return in_array($property, ['foo', 'baz']);
             }
         );
 
@@ -27,13 +26,6 @@ class CallablePropertiesExtractorTest extends TestCase
             public $qux;
         };
 
-        $properties = array_map(
-            function (ReflectionProperty $property) {
-                return $property->getName();
-            },
-            $extractor->getProperties($obj)
-        );
-
-        $this->assertSame(['foo', 'baz'], $properties);
+        $this->assertSame(['foo', 'baz'], $extractor->getProperties(get_class($obj)));
     }
 }

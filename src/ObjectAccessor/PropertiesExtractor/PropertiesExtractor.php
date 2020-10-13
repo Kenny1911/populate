@@ -7,20 +7,33 @@ namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor;
 use Kenny1911\Populate\Exception\RuntimeException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 
 class PropertiesExtractor implements PropertiesExtractorInterface
 {
     /**
      * @inheritDoc
      */
-    public function getProperties($src): array
+    public function getProperties(string $class): array
     {
         try {
-            $class = new ReflectionClass($src);
+            $ref = new ReflectionClass($class);
         } catch (ReflectionException $e) {
             throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
 
-        return $class->getProperties();
+        return array_values(
+            array_map(
+                function(ReflectionProperty $property) {
+                    return $property->getName();
+                },
+                array_filter(
+                    $ref->getProperties(),
+                    function (ReflectionProperty $property) {
+                        return !$property->isStatic();
+                    }
+                )
+            )
+        );
     }
 }

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor;
 
-use ReflectionProperty;
-
 interface PropertiesExtractorInterface
 {
     /**
-     * @param object $src
-     * @return ReflectionProperty[]
+     * @param string $class
+     * @return string[]
      */
-    public function getProperties($src): array;
+    public function getProperties(string $class): array;
 }

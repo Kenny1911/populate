@@ -6,32 +6,17 @@ namespace Kenny1911\Populate\Tests\ObjectAccessor\PropertiesExtractor;
 
 use Kenny1911\Populate\Exception\RuntimeException;
 use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractor;
+use Kenny1911\Populate\Tests\ObjectAccessor\PropertiesExtractor\Entity\Entity;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 class PropertiesExtractorTest extends TestCase
 {
+    /** @var PropertiesExtractor */
+    private $extractor;
 
-    /** @noinspection PhpUnusedPrivateFieldInspection */
     public function test()
     {
-        $src = new class {
-            public $foo;
-            protected $bar;
-            private $baz;
-        };
-
-        $extractor = new PropertiesExtractor();
-
-        $this->assertSame(
-            ['foo', 'bar', 'baz'],
-            array_map(
-                function (ReflectionProperty $property) {
-                    return $property->getName();
-                },
-                $extractor->getProperties($src)
-            )
-        );
+        $this->assertSame(['foo', 'bar', 'baz'], $this->extractor->getProperties(Entity::class));
     }
 
     public function testClassNotExist()
@@ -39,8 +24,11 @@ class PropertiesExtractorTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Class Invalid does not exist');
 
-        $extractor = new PropertiesExtractor();
-        /** @noinspection PhpParamsInspection */
-        $extractor->getProperties('Invalid');
+        $this->extractor->getProperties('Invalid');
+    }
+
+    protected function setUp(): void
+    {
+        $this->extractor = new PropertiesExtractor();
     }
 }

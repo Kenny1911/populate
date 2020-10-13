@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor;
 
 use Doctrine\Persistence\Proxy;
-use Kenny1911\Populate\Exception\RuntimeException;
+use Kenny1911\Populate\Exception\LogicException;
 use ReflectionClass;
 use ReflectionException;
 
@@ -19,27 +19,25 @@ if (interface_exists(Proxy::class)) {
             $this->internal = $internal;
         }
 
-        public function getProperties($src): array
+        /**
+         * @inheritDoc
+         * @throws ReflectionException
+         */
+        public function getProperties(string $class): array
         {
-            if ($src instanceof Proxy) {
-                try {
-                    $class = new ReflectionClass($src);
-                } catch (ReflectionException $e) {
-                    throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-                }
-
-                $parent = $class->getParentClass();
+            if (is_subclass_of($class, Proxy::class, true)) {
+                $parent = (new ReflectionClass($class))->getParentClass();
 
                 if (!$parent) {
-                    throw new RuntimeException(
-                        sprintf('Doctrine proxy class "%s" hasn\'t parent class', $class->getName())
+                    throw new LogicException(
+                        sprintf('Doctrine proxy class "%s" hasn\'t parent class', $class)
                     );
                 }
 
-                return $parent->getProperties();
+                $class = $parent->getName();
             }
 
-            return $this->internal->getProperties($src);
+            return $this->internal->getProperties($class);
         }
     }
 }
