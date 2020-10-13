@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\ObjectAccessor\PropertiesExtractor;
 
-use Kenny1911\Populate\Exception\RuntimeException;
-use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\Reflection\GetterReflectionProperty;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionMethod;
 
 class GetterPropertyExtractor implements PropertiesExtractorInterface
 {
+    private const GETTER_PATTERN = '/^(get|has|is)(\w+)$/';
+
     private $internal;
 
     public function __construct(PropertiesExtractorInterface $internal)
@@ -20,30 +19,40 @@ class GetterPropertyExtractor implements PropertiesExtractorInterface
     }
 
     /**
-     * @param object $src
-     * @return array
+     * @inheritDoc
      */
-    public function getProperties($src): array
+    public function getProperties(string $class): array
     {
-        try {
-            $class = new ReflectionClass($src);
-        } catch (ReflectionException $e) {
-            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-        }
+        $ref = new ReflectionClass($class);
 
-        return array_merge(
-            $this->internal->getProperties($src),
-            array_map(
-                function(ReflectionMethod $method) {
-                    return new GetterReflectionProperty($method);
-                },
-                array_filter(
-                    $class->getMethods(ReflectionMethod::IS_PUBLIC),
-                    function (ReflectionMethod $method) {
-                        return GetterReflectionProperty::isGetter($method);
-                    }
+        return array_unique(
+            array_merge(
+                $this->internal->getProperties($class),
+                array_map(
+                    function(ReflectionMethod $method) {
+                        preg_match('/^(get|has|is)(\w+)$/', $method->getName(), $matches);
+
+                        return lcfirst($matches[2]);
+                    },
+                    array_filter(
+                        $ref->getMethods(ReflectionMethod::IS_PUBLIC),
+                        function (ReflectionMethod $method) {
+                            return static::isGetter($method);
+                        }
+                    )
                 )
             )
+        );
+    }
+
+    private static function isGetter(ReflectionMethod $method): bool
+    {
+        return (
+            $method->isPublic() &&
+            !$method->isStatic() &&
+            !$method->isAbstract() &&
+            (bool)preg_match(static::GETTER_PATTERN, $method->getName()) &&
+            0 === $method->getNumberOfRequiredParameters()
         );
     }
 }
