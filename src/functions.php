@@ -7,7 +7,7 @@ namespace Kenny1911\Populate;
 use Kenny1911\Populate\Util\InitializedPropertiesHelper;
 
 if (version_compare(phpversion(), '7.4.0', '>=')) {
-    if (!function_exists('is_initialized')) {
+    if (!function_exists(__NAMESPACE__.'\is_initialized')) {
         /**
          * @param object $obj
          * @param string $prop
@@ -19,7 +19,7 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
         }
     }
 
-    if (!function_exists('is_typed')) {
+    if (!function_exists(__NAMESPACE__.'\is_typed')) {
         /**
          * @param object $obj
          * @param string $prop
