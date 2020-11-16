@@ -12,15 +12,15 @@ interface ObjectAccessorInterface
      * @param object $src
      * @param string[]|null $properties
      * @param array|null $ignoreProperties
-     * @param array $mapping
+     * @param array|null $mapping
      *
      * @return array
      */
     public function getData(
         $src,
         ?array $properties = null,
-        array $ignoreProperties = [],
-        array $mapping = []
+        ?array $ignoreProperties = null,
+        ?array $mapping = null
     ): array;
 
     /**

@@ -4,24 +4,22 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\ObjectAccessor;
 
-use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractor;
-use Kenny1911\Populate\ObjectAccessor\PropertiesExtractor\PropertiesExtractorInterface;
-use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 
 class ObjectAccessor implements ObjectAccessorInterface
 {
-    /** @var PropertyAccessorInterface */
     private $accessor;
 
     private $propertiesExtractor;
 
     public function __construct(
         PropertyAccessorInterface $accessor,
-        ?PropertiesExtractorInterface $propertiesExtractor = null
+        PropertyListExtractorInterface $propertiesExtractor
     )
     {
         $this->accessor = $accessor;
-        $this->propertiesExtractor = $propertiesExtractor ?? new PropertiesExtractor();
+        $this->propertiesExtractor = $propertiesExtractor;
     }
 
     /**
@@ -30,22 +28,24 @@ class ObjectAccessor implements ObjectAccessorInterface
     public function getData(
         $src,
         ?array $properties = null,
-        array $ignoreProperties = [],
-        array $mapping = []
+        ?array $ignoreProperties = null,
+        ?array $mapping = null
     ): array
     {
+        $allProperties = (array)$this->propertiesExtractor->getProperties(get_class($src));
+
+        $properties = $properties ?? $allProperties;
+        $ignoreProperties = $ignoreProperties ?? [];
+        $mapping = $mapping ?? [];
+
         $data = [];
 
-        $properties = $properties ?? $this->propertiesExtractor->getProperties(get_class($src));
-
-        if ($ignoreProperties) {
-            $properties = array_filter(
-                $properties,
-                function(string $property) use ($ignoreProperties) {
-                    return !in_array($property, $ignoreProperties);
-                }
-            );
-        }
+        $properties = array_filter(
+            $allProperties,
+            function(string $property) use ($properties, $ignoreProperties) {
+                return in_array($property, $properties) && !in_array($property, $ignoreProperties);
+            }
+        );
 
         foreach ($properties as $property) {
             if ($this->accessor->isReadable($src, $property)) {
