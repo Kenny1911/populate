@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Kenny1911\Populate\Tests\ObjectAccessor;
 
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
-use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 
 class ObjectAccessorTest extends TestCase
 {
@@ -43,6 +44,7 @@ class ObjectAccessorTest extends TestCase
     {
         $data = [
             'public' => 321,
+            'protected' => 654,
             'private' => 987,
             'invalid' => 000,
         ];
@@ -74,8 +76,13 @@ class ObjectAccessorTest extends TestCase
             {
                 return $this->private;
             }
+
+            public function setPrivate(int $value): void
+            {
+                $this->private = $value;
+            }
         };
 
-        $this->accessor = new ObjectAccessor(new ReflectionPropertyAccessor());
+        $this->accessor = new ObjectAccessor(PropertyAccess::createPropertyAccessor(), new ReflectionExtractor());
     }
 }

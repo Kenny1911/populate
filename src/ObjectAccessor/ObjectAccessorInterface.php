@@ -19,8 +19,8 @@ interface ObjectAccessorInterface
     public function getData(
         $src,
         ?array $properties = null,
-        array $ignoreProperties = [],
-        array $mapping = []
+        ?array $ignoreProperties = null,
+        ?array $mapping = null
     ): array;
 
     /**
