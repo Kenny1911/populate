@@ -12,7 +12,7 @@ interface ObjectAccessorInterface
      * @param object $src
      * @param string[]|null $properties
      * @param array|null $ignoreProperties
-     * @param array $mapping
+     * @param array|null $mapping
      *
      * @return array
      */
