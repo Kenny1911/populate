@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Tests\Util;
 
-use Kenny1911\Populate\Exception\InvalidArgumentException;
-use Kenny1911\Populate\Exception\RuntimeException;
+use InvalidArgumentException;
+use RuntimeException;
 use Kenny1911\Populate\Util\InitializedPropertiesHelper;
 use PHPUnit\Framework\TestCase;
 use stdClass;

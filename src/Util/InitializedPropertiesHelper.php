@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Kenny1911\Populate\Util;
 
-use Kenny1911\Populate\Exception\InvalidArgumentException;
-use Kenny1911\Populate\Exception\RuntimeException;
+use InvalidArgumentException;
 use ReflectionException;
 use ReflectionProperty;
+use RuntimeException;
 
 if (version_compare(phpversion(), '7.4.0', '>=')) {
     class InitializedPropertiesHelper
