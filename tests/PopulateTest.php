@@ -6,52 +6,30 @@ namespace Kenny1911\Populate\Tests;
 
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\Populate;
-use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 
 class PopulateTest extends TestCase
 {
-    /** @var object */
     private $src;
 
-    /** @var Populate */
     private $populate;
 
     public function testPopulate()
     {
-        $dest = new class {
-            public $public;
-            private $private;
-
-            public function getPrivate()
-            {
-                return $this->private;
-            }
-        };
+        $dest = new Src();
 
         $this->populate->populate($this->src, $dest);
 
         $this->assertSame(123, $dest->public);
+        $this->assertSame(456, $dest->getProtected());
         $this->assertSame(789, $dest->getPrivate());
     }
 
     public function testPopulateByPropertiesAndMapping()
     {
-        $dest = new class {
-            public $foo;
-            protected $bar;
-            private $baz;
-
-            public function getBar()
-            {
-                return $this->bar;
-            }
-
-            public function getBaz()
-            {
-                return $this->baz;
-            }
-        };
+        $dest = new Dest();
 
         $properties = ['public', 'private'];
         $ignoreProperties = ['public'];
@@ -68,21 +46,7 @@ class PopulateTest extends TestCase
     {
         $src = ['public' => 123, 'protected' => 456, 'private' => 789];
 
-        $dest = new class {
-            public $public;
-            protected $protected;
-            private $private;
-
-            public function getProtected()
-            {
-                return $this->protected;
-            }
-
-            public function getPrivate()
-            {
-                return $this->private;
-            }
-        };
+        $dest = new Src();
 
         $this->populate->populate($src, $dest);
 
@@ -93,22 +57,13 @@ class PopulateTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->src = new class {
-            public $public = 123;
-            protected $protected = 456;
-            private $private = 789;
+        $this->src = new Src(123,456,789);
 
-            public function getProtected()
-            {
-                return $this->protected;
-            }
-
-            public function getPrivate()
-            {
-                return $this->private;
-            }
-        };
-
-        $this->populate = new Populate(new ObjectAccessor(new ReflectionPropertyAccessor()));
+        $this->populate = new Populate(
+            new ObjectAccessor(
+                PropertyAccess::createPropertyAccessor(),
+                new ReflectionExtractor()
+            )
+        );
     }
 }
