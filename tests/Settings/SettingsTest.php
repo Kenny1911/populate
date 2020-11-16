@@ -39,4 +39,17 @@ class SettingsTest extends TestCase
         $this->assertSame($mapping, $settings->getMapping(new Src(), new Dest()));
         $this->assertSame([], $settings->getMapping(Src::class, 'invalid'));
     }
+
+    public function testEmpty()
+    {
+        $settings = new Settings([
+            [
+                'src' => Src::class,
+            ]
+        ]);
+
+        $this->assertSame([], $settings->getProperties(Src::class, Dest::class));
+        $this->assertSame([], $settings->getIgnoreProperties(Src::class, Dest::class));
+        $this->assertSame([], $settings->getMapping(Src::class, Dest::class));
+    }
 }
