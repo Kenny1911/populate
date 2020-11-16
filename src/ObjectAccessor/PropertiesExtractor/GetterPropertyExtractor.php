@@ -30,29 +30,24 @@ class GetterPropertyExtractor implements PropertiesExtractorInterface
                 $this->internal->getProperties($class),
                 array_map(
                     function(ReflectionMethod $method) {
-                        preg_match('/^(get|has|is)(\w+)$/', $method->getName(), $matches);
+                        preg_match(static::GETTER_PATTERN, $method->getName(), $matches);
 
                         return lcfirst($matches[2]);
                     },
                     array_filter(
                         $ref->getMethods(ReflectionMethod::IS_PUBLIC),
                         function (ReflectionMethod $method) {
-                            return static::isGetter($method);
+                            return (
+                                $method->isPublic() &&
+                                !$method->isStatic() &&
+                                !$method->isAbstract() &&
+                                (bool)preg_match(static::GETTER_PATTERN, $method->getName()) &&
+                                0 === $method->getNumberOfRequiredParameters()
+                            );
                         }
                     )
                 )
             )
-        );
-    }
-
-    private static function isGetter(ReflectionMethod $method): bool
-    {
-        return (
-            $method->isPublic() &&
-            !$method->isStatic() &&
-            !$method->isAbstract() &&
-            (bool)preg_match(static::GETTER_PATTERN, $method->getName()) &&
-            0 === $method->getNumberOfRequiredParameters()
         );
     }
 }
