@@ -12,6 +12,8 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          * @param object $obj
          * @param string $prop
          * @return bool
+         *
+         * @deprecated since "kenny1911/populate" v0.4.0, use "kenny1911/typed-properties-helper" package.
          */
         function is_initialized($obj, string $prop): bool
         {
@@ -24,6 +26,8 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          * @param object $obj
          * @param string $prop
          * @return bool
+         *
+         * @deprecated since "kenny1911/populate" v0.4.0, use "kenny1911/typed-properties-helper" package.
          */
         function is_typed($obj, string $prop): bool
         {

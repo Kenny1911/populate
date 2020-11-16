@@ -10,6 +10,9 @@ use ReflectionProperty;
 use RuntimeException;
 
 if (version_compare(phpversion(), '7.4.0', '>=')) {
+    /**
+     * @deprecated since "kenny1911/populate" v0.4.0, use "kenny1911/typed-properties-helper" package.
+     */
     class InitializedPropertiesHelper
     {
         /**
@@ -17,9 +20,13 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          * @param string $prop
          *
          * @return bool
+         *
+         * @deprecated since "kenny1911/populate" v0.4.0, use "kenny1911/typed-properties-helper" package.
          */
         public static function isInitialized($obj, string $prop): bool
         {
+            trigger_error('Method InitializedPropertiesHelper::isInitialized() is deprecated since "kenny1911/populate" v0.4.0. It will removed in v1.0.0. Use "kenny1911/typed-properties-helper" package.', E_USER_DEPRECATED);
+
             $ref = static::getProperty($obj, $prop);
             $ref->setAccessible(true);
 
@@ -31,9 +38,13 @@ if (version_compare(phpversion(), '7.4.0', '>=')) {
          * @param string $prop
          *
          * @return bool
+         *
+         * @deprecated since "kenny1911/populate" v0.4.0, use "kenny1911/typed-properties-helper" package.
          */
         public static function isTyped($obj, string $prop): bool
         {
+            trigger_error('Method InitializedPropertiesHelper::isTyped() is deprecated since "kenny1911/populate" v0.4.0. It will removed in v1.0.0. Use "kenny1911/typed-properties-helper" package.', E_USER_DEPRECATED);
+
             return static::getProperty($obj, $prop)->hasType();
         }
 
