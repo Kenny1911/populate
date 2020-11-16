@@ -17,7 +17,7 @@ interface PopulateInterface
         $src,
         $dest,
         ?array $properties = null,
-        array $ignoreProperties = [],
-        array $mapping = []
+        ?array $ignoreProperties = null,
+        ?array $mapping = null
     ): void;
 }
