@@ -27,11 +27,25 @@ class ObjectAccessor implements ObjectAccessorInterface
     /**
      * @inheritDoc
      */
-    public function getData($src, ?array $properties = null, array $mapping = []): array
+    public function getData(
+        $src,
+        ?array $properties = null,
+        array $ignoreProperties = [],
+        array $mapping = []
+    ): array
     {
         $data = [];
 
         $properties = $properties ?? $this->propertiesExtractor->getProperties(get_class($src));
+
+        if ($ignoreProperties) {
+            $properties = array_filter(
+                $properties,
+                function(string $property) use ($ignoreProperties) {
+                    return !in_array($property, $ignoreProperties);
+                }
+            );
+        }
 
         foreach ($properties as $property) {
             if ($this->accessor->isReadable($src, $property)) {

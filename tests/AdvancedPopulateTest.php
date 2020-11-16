@@ -56,11 +56,12 @@ class AdvancedPopulateTest extends TestCase
         $this->settings->setMapping($this->src, $this->dest, ['protected' => 'bar', 'private' => 'baz']);
 
         $properties = ['public', 'protected'];
+        $ignoreProperties = ['protected'];
         $mapping = ['public' => 'foo', 'protected' => 'protected'];
-        $this->populate->populate($this->src, $this->dest, $properties, $mapping);
+        $this->populate->populate($this->src, $this->dest, $properties, $ignoreProperties, $mapping);
 
         $this->assertNull($this->dest->public);
-        $this->assertSame(456, $this->dest->getProtected());
+        $this->assertNull($this->dest->getProtected());
         $this->assertNull($this->dest->getPrivate());
         $this->assertSame(123, $this->dest->foo);
         $this->assertNull($this->dest->getBar());

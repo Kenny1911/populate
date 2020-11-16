@@ -30,13 +30,13 @@ class ObjectAccessorTest extends TestCase
     public function testGetDataByPropertiesAndMapping()
     {
         $expected = [
-            'foo' => 123,
             'bar' => 789
         ];
 
         $properties = ['public', 'private'];
+        $ignoreProperties = ['public'];
         $mapping = ['public' => 'foo', 'private' => 'bar'];
-        $this->assertSame($expected, $this->accessor->getData($this->src, $properties, $mapping));
+        $this->assertSame($expected, $this->accessor->getData($this->src, $properties, $ignoreProperties, $mapping));
     }
 
     public function testSetData()

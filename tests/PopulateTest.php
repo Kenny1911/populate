@@ -54,10 +54,12 @@ class PopulateTest extends TestCase
         };
 
         $properties = ['public', 'private'];
+        $ignoreProperties = ['public'];
         $mapping = ['public' => 'foo', 'protected' => 'bar', 'private' => 'baz'];
-        $this->populate->populate($this->src, $dest, $properties, $mapping);
 
-        $this->assertSame(123, $dest->foo);
+        $this->populate->populate($this->src, $dest, $properties, $ignoreProperties, $mapping);
+
+        $this->assertNull($dest->foo);
         $this->assertNull($dest->getBar());
         $this->assertSame(789, $dest->getBaz());
     }

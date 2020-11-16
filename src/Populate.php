@@ -16,9 +16,18 @@ class Populate implements PopulateInterface
         $this->accessor = $accessor;
     }
 
-    public function populate($src, $dest, ?array $properties = null, array $mapping = []): void
+    /**
+     * @inheritDoc
+     */
+    public function populate(
+        $src,
+        $dest,
+        ?array $properties = null,
+        array $ignoreProperties = [],
+        array $mapping = []
+    ): void
     {
-        $data = is_object($src) ? $this->accessor->getData($src, $properties, $mapping) : $src;
+        $data = is_object($src) ? $this->accessor->getData($src, $properties, $ignoreProperties, $mapping) : $src;
 
         $this->accessor->setData($dest, $data);
     }
