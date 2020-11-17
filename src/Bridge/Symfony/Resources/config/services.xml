@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <defaults public="false" />
+
+        <service id="Kenny1911\Populate\ObjectAccessor\ObjectAccessor">
+            <argument type="service" id="Symfony\Component\PropertyAccess\PropertyAccessorInterface"/>
+            <argument type="service" id="Symfony\Component\PropertyInfo\PropertyListExtractorInterface"/>
+        </service>
+
+        <service id="Kenny1911\Populate\ObjectAccessor\ObjectAccessorInterface" alias="Kenny1911\Populate\ObjectAccessor\ObjectAccessor" />
+
+        <service id="Kenny1911\Populate\Populate">
+            <argument type="service" id="Kenny1911\Populate\ObjectAccessor\ObjectAccessorInterface" />
+        </service>
+
+        <service id="Kenny1911\Populate\PopulateInterface" alias="Kenny1911\Populate\Populate" />
+
+        <service id="Kenny1911\Populate\AdvancedPopulate" decorates="Kenny1911\Populate\PopulateInterface">
+            <argument type="service" id="Kenny1911\Populate\AdvancedPopulate.inner" />
+            <argument type="service" id="Kenny1911\Populate\Settings\SettingsInterface" />
+        </service>
+
+        <service id="populate" alias="Kenny1911\Populate\PopulateInterface" public="true" />
+    </services>
+</container>
