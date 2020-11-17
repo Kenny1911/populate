@@ -27,6 +27,10 @@ class Populate implements PopulateInterface
         ?array $mapping = null
     ): void
     {
+        $properties = $properties ?? [];
+        $ignoreProperties = $ignoreProperties ?? [];
+        $mapping = $mapping ?? [];
+
         $data = is_object($src) ? $this->accessor->getData($src, $properties, $ignoreProperties, $mapping) : $src;
 
         $this->accessor->setData($dest, $data);
