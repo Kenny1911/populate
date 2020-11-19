@@ -11,11 +11,17 @@ interface ObjectAccessorInterface
      *
      * @param object $src
      * @param string[]|null $properties
-     * @param array $mapping
+     * @param array|null $ignoreProperties
+     * @param array|null $mapping
      *
      * @return array
      */
-    public function getData($src, ?array $properties = null, array $mapping = []): array;
+    public function getData(
+        $src,
+        array $properties = [],
+        array $ignoreProperties = [],
+        array $mapping = []
+    ): array;
 
     /**
      * Set object properties value from associative array data.

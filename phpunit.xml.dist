@@ -10,7 +10,7 @@
 
     <testsuites>
         <testsuite name="Populate test suite">
-            <directory suffix="Test.php">./tests/</directory>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -18,7 +18,7 @@
         <whitelist>
             <directory>./src/</directory>
             <exclude>
-                <file>./src/functions.php</file>
+                <directory>./src/Bridge/</directory>
             </exclude>
         </whitelist>
     </filter>

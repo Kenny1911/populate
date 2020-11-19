@@ -2,159 +2,176 @@
 
 `PHP Populate` is a library for fill attributes from source object to destination object.
 
+For example, you can use this library to automatic fill properties from DTO to ORM entity.
+
 ## Install
 
 ```bash
 composer require kenny1911/populate
 ```
 
-## Basic components
-
-- `PropertyAccessorInterface` - interface for read and write object attribute value. It has two implementations:
-  - `ReflectionPropertyAccessor` - property accessor, based on `PHP Reflection API`.
-  - `SymfonyPropertyAccessor` - bridge to `symfony/property-access` package.
-  - `ChainPropertyAccessor` - chain of several `PropertyAccessorInterface`
-
-- `ObjectAccessorInterface` - interface for export object properties to array and set object properties from data array.
-  - `ObjectAccessor` - implementation of `ObjectAccessorInterface`.
-
-- `PropertiesExtractorInterface` - interface for extract properties from an object.
-  - `PropertiesExtractor` - component for extracting all object properties.
-  - `UninitializedPropertiesExtractor` - decorator of `PropertiesExtractorInterface` for filtering properties with
-  uninitialized state. Used since PHP 7.4.
-  - `NonStaticPropertiesExtractor` - decorator of `PropertiesExtractorInterface` for filtering static properties.
-  - `CallablePropertiesExtractor` - decorator of `PropertiesExtractorInterface`, that used callback function to
-  filtering properties.
-
-- `FreezableInterface` - interface for freeze object.
-  - `FreezableTrait` - implementation of `FreezableInterface`.
-
-- `PopulateSettingsStorageInterface` - storage container of properties lists and mapping to populate objects. Used in
-`AdvancedPopulate`.
-  - `PopulateSettingsStorage` - simple implementation of `PopulateSettingsStorageInterface`.
-  - `FreezablePopulateSettingsStorage` - decorator of `PopulateSettingsStorageInterface`, implementing
-  `FreezableInterface`.
-
-- `PopulateInterface` - interface for filling properties from source object to destination object.
-  - `Populate` - simple implementation of `PopulateInterface`.
-  - `AdvancedPopulate` - decorator of `PopulateInterface`, used `PopulateSettingsStorageInterface` as default settings.
-
-- `PopulateBuilder` - builder for `PopulateInterface` object.
-
-- `Utils` - additional utils.
-  - `UninitializedPropertiesHelper` - class, contains static helper methods:
-    - `isInitialized` - check, that object property is initialized.
-    - `isTyped` - check, that object property is typed.
-
 ## Usage
 
-### Create `Populate` object
+### Simple usage
 
-Use `PopulateBuilder`.
+To fill in an object's fields with values from another object, use method
+`Kenny1911\Populate\PopulateInterface::populate()`. Arguments of method:
+
+- `$src` - Source array or object from which values will be taken.
+- `$dest` - Destination object.
+- `$properties` - Array of allowed properties to be updated.
+- `$ignoreProperties` - Array of denied properties not to be updated.
+- `$mapping` - Key-value map to match property names from source object (`$src`) and destination object (`$dest`). Key -
+property name in `$src`, value - in `$dest`.
+
+Use `PopulateBuilder` for creating new `PopulateInterface` instance:
 
 ```php
 use Kenny1911\Populate\PopulateBuilder;
 
-$populate = PopulateBuilder::create();
-```
+$populate = PopulateBuilder::create()->build(); // Create new instance
 
-`PopulateBuilder` methods:
+class Src
+{
+    public $foo;
+    public $bar;
+    public $baz;
+}
 
-- `build` - Build new `PopulateInterface` object with set parameters.
-- `setObjectAccessor` - Manual set `ObjectAccessorInterface`.
-- `setPropertyAccessor` - Manual set `PropertyAccessorInterface`.
-- `setReflectionPropertyAccessor` - Automatic create `ReflectionPropertyAccessor`.
-- `setSymfonyPropertyAccessor` - Automatic create `SymfonyPropertyAccessor`. You can set original Symfony
-`PropertyAccessorInterface` service.
-- `setProperties` - Call method `setProperties` of `PopulateSettingsStorageInterface`.
-- `setMapping` - Call method `setMapping` of `PopulateSettingsStorageInterface`.
-- `freezeSettings` - Make `PopulateSettingsStorageInterface` freezable.
+class Dest
+{
+    public $foo;
+    public $bar;
+    public $baz;
+}
 
-Manual creation of `Populate` object.
+$src = new Src();
+$src->foo = 'Foo';
 
-```php
-use Kenny1911\Populate\Populate;
-use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
-use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
+$dest = new Dest();
 
-$populate = new Populate(
-    new ObjectAccessor(
-        new ReflectionPropertyAccessor()
-    )
+$populate->populate(
+    $src,               // Source object
+    $dest,              // Destination object
+    ['foo', 'bar'],     // Only properties `foo` and `bar` will be populated
+    ['bar'],            // Property `bar` won't bw populated
+    ['foo' => 'bar']    // Value of $src->foo will be set to $dest->bar
 );
+
+// $dest->bar === 'Foo';
 ```
 
-### Populate object
+
+### Advanced usage
+
+You may need to use it with preset settings of arguments `$properties`, `$ignoreProperties` and `$mapping`. You can use
+`AdvancedPopulate` for it:
 
 ```php
 use Kenny1911\Populate\PopulateBuilder;
 
-$populate = PopulateBuilder::create()->build();
+$settings = [
+    [
+        'src' => 'Src',                 // Required
+        'dest' => 'Dest',               // Required
+        'properties' => ['foo', 'bar'], // Optional
+        'ignore_properties' => ['bar'], // Optional
+        'mapping' => ['foo' => 'bar']   // Optional
+    ]
+];
 
-$src = new class {
-    public $prop1 = 123;
-    public $prop2 = 456;
-};
+$populate = PopulateBuilder::create()->setSettings($settings)->build();
 
-$dest = new class {
-    public $prop1;
-    public $prop2;
-};
+class Src
+{
+    public $foo;
+    public $bar;
+    public $baz;
+}
+
+class Dest
+{
+    public $foo;
+    public $bar;
+    public $baz;
+}
+
+$src = new Src();
+$src->foo = 'Foo';
+
+$dest = new Dest();
 
 $populate->populate($src, $dest);
 
-// $dest->prop1 === 123
-// $dest->prop2 === 456
-````
-
-### Get the associative array from object
-
-```php
-use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
-use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
-
-$src = new class {
-    public $prop1 = 123;
-    public $prop2 = 456;
-    public $prop3 = 789;
-};
-
-$accessor = new ObjectAccessor(
-    new ReflectionPropertyAccessor()
-);
-$data = $accessor->getData($src); // $data = ['prop1' => 123, 'prop2' => 456, 'prop3' => 789]
+// $dest->bar === 'Foo';
 ```
 
+> Preset settings won't use if you will use `$properties` and `$ignoreProperties` arguments.
+
+> If you set `$mapping` argument, it will merge with preset mapping.
+
+### Integrate with Symfony
+
+1. Register bundle in `config/bundles.php`:
+
+    ```php
+    return [
+        // ...
+        Kenny1911\Populate\Bridge\Symfony\PopulateBundle::class => ['all' => true]
+        // ...
+    ];
+    ```
+
+2. Create file `config/packages/populate.yaml`. Example:
+
+    ```yaml
+    populate:
+        settings:
+            -   src: Src
+                dest: Dest
+                properties: [foo, bar]
+                ignore_properties: [bar]
+                mapping:
+                    foo: bar
+    ```
+
+Now, you can inject `PopulateInterface` to your own services.
+
 ```php
-use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
-use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
+use Kenny1911\Populate\PopulateInterface;
 
-$src = new class {
-    private $prop1 = 123;
-    private $prop2 = 456;
-    private $prop3 = 789;
+class Service
+{
+    /** @var PopulateInterface */
+    private $populate;
 
-    public function getProp1()
+    public function __construct(PopulateInterface $populate)
     {
-        return $this->prop1;
-    }
-    
-    public function getProp2()
-    {
-        return $this->prop2;
+        $this->populate = $populate;
     }
 
-    public function getProp3()
+    public function action($src, $dest)
     {
-        return $this->prop3;
+        $this->populate->populate($src, $dest);
     }
-};
-
-$accessor = new ObjectAccessor(
-    new SymfonyPropertyAccessor() // Use Symfony property accessor from `symfony/property-access` package
-);
-
-$data = $accessor->getData($src, ['prop1', 'prop2'], ['prop1' => 'first', 'prop2' => 'second']);
-// $data = ['first' => 123, 'second' = 456]
-
+}
 ```
+
+Also, you can use public symfony service `populate`:
+
+```php
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+class Service implements ContainerAwareInterface
+{
+    use ContainerAwareTrait;
+
+    public function action($src, $dest)
+    {
+        $populate = $this->container->get('populate');
+
+        $populate->populate($src, $dest);
+    }
+}
+``` 

@@ -2,43 +2,50 @@
 
 declare(strict_types=1);
 
-namespace Kenny1911\Populate\Tests;
-
 use Kenny1911\Populate\AdvancedPopulate;
-use Kenny1911\Populate\Exception\LogicException;
-use Kenny1911\Populate\SettingsStorage\FreezableSettingsStorage;
 use Kenny1911\Populate\ObjectAccessor\ObjectAccessor;
 use Kenny1911\Populate\Populate;
 use Kenny1911\Populate\PopulateBuilder;
-use Kenny1911\Populate\PopulateInterface;
-use Kenny1911\Populate\SettingsStorage\SettingsStorage;
-use Kenny1911\Populate\SettingsStorage\SettingsStorageInterface;
-use Kenny1911\Populate\PropertyAccessor\PropertyAccessorInterface;
-use Kenny1911\Populate\PropertyAccessor\ReflectionPropertyAccessor;
-use Kenny1911\Populate\PropertyAccessor\SymfonyPropertyAccessor;
+use Kenny1911\Populate\Settings\SettingsInterface;
+use Kenny1911\Populate\Tests\Dest;
+use Kenny1911\Populate\Tests\Src;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
-use ReflectionProperty;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 
 class PopulateBuilderTest extends TestCase
 {
-    public function testBuildSimple()
+    public function testSetPropertyAccessor()
     {
+        $accessor = PropertyAccess::createPropertyAccessor();
+
         /** @var Populate $populate */
-        $populate = PopulateBuilder::create()->build();
-        $objectAccessor = $this->getObjectAccessor($populate);
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
+        $populate = PopulateBuilder::create()->setPropertyAccessor($accessor)->build();
 
         $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
+        $this->assertSame($accessor, $this->getAccessor($populate));
     }
 
-    public function testBuildWithCustomObjectAccessor()
+    public function testSetPropertyListExtractor()
     {
-        $objectAccessor = new ObjectAccessor(new ReflectionPropertyAccessor());
+        $extractor = new ReflectionExtractor();
+
+        /** @var Populate $populate */
+        $populate = PopulateBuilder::create()->setPropertyListExtractor($extractor)->build();
+
+        $this->assertInstanceOf(Populate::class, $populate);
+        $this->assertSame($extractor, $this->getExtractor($populate));
+    }
+
+    public function testSetObjectAccessor()
+    {
+        $objectAccessor = new ObjectAccessor(
+            PropertyAccess::createPropertyAccessor(),
+            new ReflectionExtractor()
+        );
+
         /** @var Populate $populate */
         $populate = PopulateBuilder::create()->setObjectAccessor($objectAccessor)->build();
 
@@ -46,157 +53,33 @@ class PopulateBuilderTest extends TestCase
         $this->assertSame($objectAccessor, $this->getObjectAccessor($populate));
     }
 
-    public function testBuildWithReflectionAccessorType()
+    public function testSetSettings()
     {
-        /** @var Populate $populate */
-        $populate = PopulateBuilder::create()->setReflectionPropertyAccessor()->build();
-        $objectAccessor = $this->getObjectAccessor($populate);
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
+        $properties = ['public', 'private'];
+        $ignoreProperties = ['private'];
+        $mapping = ['public' => 'foo', 'protected' => 'bar', 'private' => 'baz'];
 
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-    }
-
-    public function testBuildWithSymfonyAccessorType()
-    {
-        /** @var Populate $populate */
-        $populate = PopulateBuilder::create()->setSymfonyPropertyAccessor()->build();
-        $objectAccessor = $this->getObjectAccessor($populate);
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
-
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(SymfonyPropertyAccessor::class, $propertyAccessor);
-    }
-
-    public function testBuildWithSymfonyAccessorTypeWithCustomPropertyAccessor()
-    {
-        $symfonyPropertyAccessor = PropertyAccess::createPropertyAccessor();
-
-        /** @var Populate $populate */
-        $populate = PopulateBuilder::create()->setSymfonyPropertyAccessor($symfonyPropertyAccessor)->build();
-        $objectAccessor = $this->getObjectAccessor($populate);
-        /** @var SymfonyPropertyAccessor $propertyAccessor */
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
-
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(SymfonyPropertyAccessor::class, $propertyAccessor);
-        $this->assertSame($symfonyPropertyAccessor, $this->getOriginalSymfonyPropertyAccessor($propertyAccessor));
-    }
-
-    public function testBuildWithCustomPropertyAccessorInterface()
-    {
-        $customPropertyAccessor = new ReflectionPropertyAccessor();
-
-        /** @var Populate $populate */
-        $populate = PopulateBuilder::create()->setPropertyAccessor($customPropertyAccessor)->build();
-        $objectAccessor = $this->getObjectAccessor($populate);
-        /** @var SymfonyPropertyAccessor $propertyAccessor */
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
-
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-        $this->assertSame($customPropertyAccessor, $propertyAccessor);
-    }
-
-    public function testBuildWithSettings()
-    {
-        /** @var AdvancedPopulate $advancedPopulate */
-        $advancedPopulate = PopulateBuilder::create()
-            ->setProperties('Foo', 'Bar', ['prop1', 'prop2', 'prop3'])
-            ->setMapping('Foo', 'Bar', ['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'])
+        /** @var AdvancedPopulate $populate */
+        $populate = PopulateBuilder::create()
+            ->setSettings([
+                [
+                    'src' => Src::class,
+                    'dest' => Dest::class,
+                    'properties' => $properties,
+                    'ignore_properties' => $ignoreProperties,
+                    'mapping' => $mapping
+                ]
+            ])
             ->build()
         ;
-        /** @var Populate $populate */
-        $populate = $this->getOriginalPopulate($advancedPopulate);
-        $objectAccessor = $this->getObjectAccessor($populate);
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
-        $settings = $this->getSettings($advancedPopulate);
 
-        $this->assertInstanceOf(AdvancedPopulate::class, $advancedPopulate);
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-        $this->assertInstanceOf(SettingsStorage::class, $settings);
-        $this->assertSame(['prop1', 'prop2', 'prop3'], $settings->getProperties('Foo', 'Bar'));
-        $this->assertSame(['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'], $settings->getMapping('Foo', 'Bar'));
-    }
-
-    public function testBuildWithFrozenSettings()
-    {
-        /** @var AdvancedPopulate $advancedPopulate */
-        $advancedPopulate = PopulateBuilder::create()
-            ->setProperties('Foo', 'Bar', ['prop1', 'prop2', 'prop3'])
-            ->setMapping('Foo', 'Bar', ['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'])
-            ->freezeSettings()
-            ->build()
-        ;
-        /** @var Populate $populate */
-        $populate = $this->getOriginalPopulate($advancedPopulate);
-        $objectAccessor = $this->getObjectAccessor($populate);
-        $propertyAccessor = $this->getPropertyAccessor($objectAccessor);
-        $freezableSettings = $this->getSettings($advancedPopulate);
-        $settings = $this->getOriginalSettings($freezableSettings);
-
-        $this->assertInstanceOf(AdvancedPopulate::class, $advancedPopulate);
-        $this->assertInstanceOf(Populate::class, $populate);
-        $this->assertInstanceOf(ObjectAccessor::class, $objectAccessor);
-        $this->assertInstanceOf(ReflectionPropertyAccessor::class, $propertyAccessor);
-        $this->assertInstanceOf(FreezableSettingsStorage::class, $freezableSettings);
-        $this->assertInstanceOf(SettingsStorage::class, $settings);
-        $this->assertSame(['prop1', 'prop2', 'prop3'], $freezableSettings->getProperties('Foo', 'Bar'));
-        $this->assertSame(['prop1' => 'foo', 'prop2' => 'bar', 'prop3' => 'baz'], $settings->getMapping('Foo', 'Bar'));
-    }
-
-    public function testSetObjectAccessorAfterPropertyAccessor()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Object Accessor cannot be set after define property Property Accessor.');
-
-        PopulateBuilder::create()
-            ->setPropertyAccessor(new ReflectionPropertyAccessor())
-            ->setObjectAccessor(new ObjectAccessor(new ReflectionPropertyAccessor()))
-            ->build()
-        ;
-    }
-
-    public function testSetPropertyAccessorAfterObjectAccessor()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Property Accessor cannot be set after define Object Accessor.');
-
-        PopulateBuilder::create()
-            ->setObjectAccessor(new ObjectAccessor(new ReflectionPropertyAccessor()))
-            ->setPropertyAccessor(new ReflectionPropertyAccessor())
-            ->build()
-        ;
-    }
-
-    public function testBuildInvalidAccessorType()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Invalid property accessor type.');
-
-        $builder = PopulateBuilder::create();
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $ref = new ReflectionProperty($builder, 'propertyAccessorType');
-        $ref->setAccessible(true);
-        $ref->setValue($builder, 'invalid');
-
-        $builder->build();
-    }
-
-    private function getOriginalPopulate(PopulateInterface $populate): PopulateInterface
-    {
-        if ($populate instanceof AdvancedPopulate) {
-            return $this->getProperty($populate, 'populate');
-        }
-
-        return $populate;
+        $this->assertInstanceOf(AdvancedPopulate::class, $populate);
+        $this->assertSame($properties, $this->getSettings($populate)->getProperties(Src::class, Dest::class));
+        $this->assertSame(
+            $ignoreProperties,
+            $this->getSettings($populate)->getIgnoreProperties(Src::class, Dest::class)
+        );
+        $this->assertSame($mapping, $this->getSettings($populate)->getMapping(Src::class, Dest::class));
     }
 
     private function getObjectAccessor(Populate $populate): ObjectAccessor
@@ -204,45 +87,29 @@ class PopulateBuilderTest extends TestCase
         return $this->getProperty($populate, 'accessor');
     }
 
-    private function getPropertyAccessor(ObjectAccessor $accessor): PropertyAccessorInterface
+    private function getAccessor(Populate $populate): PropertyAccessorInterface
     {
-        return $this->getProperty($accessor, 'accessor');
+        return $this->getProperty($this->getObjectAccessor($populate), 'accessor');
     }
 
-    private function getOriginalSymfonyPropertyAccessor(SymfonyPropertyAccessor $accessor): PropertyAccessor
+    private function getExtractor(Populate $populate): PropertyListExtractorInterface
     {
-        return $this->getProperty($accessor, 'accessor');
+        return $this->getProperty($this->getObjectAccessor($populate), 'propertiesExtractor');
     }
 
-    private function getSettings(AdvancedPopulate $populate): SettingsStorageInterface
+    private function getSettings(AdvancedPopulate $populate): SettingsInterface
     {
         return $this->getProperty($populate, 'settings');
     }
 
-    private function getOriginalSettings(SettingsStorageInterface $settings): SettingsStorageInterface
-    {
-        if ($settings instanceof FreezableSettingsStorage) {
-            return $this->getProperty($settings, 'settings');
-        }
-
-        return $settings;
-    }
-
     /**
      * @param object $object
-     * @param string $property
-     *
-     * @return mixed
      */
     private function getProperty($object, string $property)
     {
-        try {
-            $ref = new ReflectionProperty($object, $property);
-            $ref->setAccessible(true);
+        $ref = new ReflectionProperty($object, $property);
+        $ref->setAccessible(true);
 
-            return $ref->getValue($object);
-        } catch (ReflectionException $e) {
-            return null;
-        }
+        return $ref->getValue($object);
     }
 }
