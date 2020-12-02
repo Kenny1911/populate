@@ -70,8 +70,18 @@ class AdvancedPopulateTest extends TestCase
         $this->assertSame(123, $dest->foo);
         $this->assertNull($dest->getBar());
         $this->assertNull($dest->getBaz());
+    }
 
+    public function testPopulateFromArray()
+    {
+        $src = ['foo' => 123, 'bar' => 456, 'baz' => 789];
+        $dest = new Dest();
 
+        $this->createPopulate()->populate($src, $dest);
+
+        $this->assertSame(123, $dest->foo);
+        $this->assertSame(456, $dest->getBar());
+        $this->assertSame(789, $dest->getBaz());
     }
 
     private function createPopulate(array $settings = []): AdvancedPopulate

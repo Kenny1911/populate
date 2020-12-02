@@ -28,13 +28,15 @@ class AdvancedPopulate implements PopulateInterface
         ?array $mapping = null
     ): void
     {
-        $properties = $properties ?? [];
-        $ignoreProperties = $ignoreProperties ?? [];
-        $mapping = $mapping ?? [];
+        if (is_object($src)) {
+            $properties = $properties ?? [];
+            $ignoreProperties = $ignoreProperties ?? [];
+            $mapping = $mapping ?? [];
 
-        $properties = $properties ?: $this->settings->getProperties($src, $dest);
-        $ignoreProperties = $ignoreProperties ?: $this->settings->getIgnoreProperties($src, $dest);
-        $mapping = array_merge($this->settings->getMapping($src, $dest), $mapping);
+            $properties = $properties ?: $this->settings->getProperties($src, $dest);
+            $ignoreProperties = $ignoreProperties ?: $this->settings->getIgnoreProperties($src, $dest);
+            $mapping = array_merge($this->settings->getMapping($src, $dest), $mapping);
+        }
 
         $this->populate->populate($src, $dest, $properties, $ignoreProperties, $mapping);
     }
